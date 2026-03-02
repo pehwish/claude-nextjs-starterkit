@@ -1,19 +1,13 @@
-import * as React from "react"
+'use client';
 
-const MOBILE_BREAKPOINT = 768
+import { useMediaQuery } from 'react-responsive';
 
-export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+const MOBILE_BREAKPOINT = 767;
 
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
-
-  return !!isMobile
+/**
+ * 모바일 뷰포트 감지 훅 (react-responsive 기반)
+ * @returns 모바일 화면 여부
+ */
+export function useIsMobile(): boolean {
+  return useMediaQuery({ maxWidth: MOBILE_BREAKPOINT });
 }

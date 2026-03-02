@@ -21,6 +21,10 @@ export default function HooksGuide() {
 
 import { useEffect, useState } from 'react';
 
+/**
+ * 컴포넌트가 클라이언트에서 마운트되었는지 확인하는 훅
+ * SSR 오류 방지용
+ */
 export function useMounted() {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -55,24 +59,15 @@ export function Component() {
         language="tsx"
         code={`'use client';
 
-import { useEffect, useState } from 'react';
+import { useMediaQuery as useResponsiveQuery } from 'react-responsive';
 
-export function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
-
-    const listener = () => setMatches(media.matches);
-    media.addEventListener('change', listener);
-
-    return () => media.removeEventListener('change', listener);
-  }, [matches, query]);
-
-  return matches;
+/**
+ * CSS 미디어 쿼리 감지 훅 (react-responsive 기반)
+ * @param query - CSS 미디어 쿼리 문자열 (예: "(min-width: 768px)")
+ * @returns 쿼리 일치 여부
+ */
+export function useMediaQuery(query: string): boolean {
+  return useResponsiveQuery({ query });
 }`}
       />
 
@@ -87,6 +82,62 @@ export function Component() {
   return (
     <div>
       {isMobile ? '모바일 레이아웃' : '데스크탑 레이아웃'}
+    </div>
+  );
+}`}
+      />
+
+      {/* useLocalStorage */}
+      <h2>useLocalStorage</h2>
+      <p>브라우저의 localStorage에 데이터를 저장하고 동기화하는 훅입니다. 여러 탭 간 상태 동기화를 자동으로 지원합니다.</p>
+
+      <h3>구현</h3>
+      <CodeBlock
+        language="tsx"
+        code={`'use client';
+
+import useLocalStorageLib from 'use-local-storage';
+
+/**
+ * localStorage에 데이터를 저장하고 동기화하는 훅
+ * use-local-storage 라이브러리 기반
+ * @param key - localStorage 키
+ * @param defaultValue - 기본값
+ * @returns [값, 값 설정 함수]
+ */
+export const useLocalStorage = useLocalStorageLib;`}
+      />
+
+      <h3>사용 예시</h3>
+      <CodeBlock
+        language="tsx"
+        code={`'use client';
+
+import { useLocalStorage } from '@/hooks/use-local-storage';
+
+export function UserPreferences() {
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  const [fontSize, setFontSize] = useLocalStorage('fontSize', 16);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label>테마</label>
+        <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+          <option value="light">라이트</option>
+          <option value="dark">다크</option>
+        </select>
+      </div>
+      <div>
+        <label>폰트 크기: {fontSize}px</label>
+        <input
+          type="range"
+          min="12"
+          max="24"
+          value={fontSize}
+          onChange={(e) => setFontSize(parseInt(e.target.value))}
+        />
+      </div>
     </div>
   );
 }`}
