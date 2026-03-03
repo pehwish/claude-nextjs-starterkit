@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# 타입 체크 + ESLint 일괄 실행
+# 사용: /type-check
+
+set -e  # 에러 발생 시 즉시 종료
+
+echo "📋 타입 체크 및 린트 검증 시작..."
+echo ""
+
+# TypeScript strict 체크
+echo "🔍 TypeScript strict 체크 중..."
+if npx tsc --noEmit; then
+  echo "✅ 타입 체크 통과"
+else
+  echo "❌ 타입 체크 실패"
+  exit 1
+fi
+
+echo ""
+
+# ESLint 실행
+echo "🎯 ESLint 린트 중..."
+if npx eslint . --max-warnings 0; then
+  echo "✅ ESLint 통과"
+else
+  echo "❌ ESLint 실패"
+  exit 1
+fi
+
+echo ""
+echo "✅ 모든 검증 통과"
+echo "🚀 빌드할 준비가 되었습니다!"
